@@ -5,12 +5,12 @@
 //Dallas, TX
 $source_longitude='-96.7970';
 $source_latitude='32.7767';
-//New York, NY
-$destination_longitude='-74.0060';
-$destination_latitude='40.7128';
+//Addison, Texas
+$destination_longitude='-96.83256117564599';
+$destination_latitude='32.967452488953626';
 
 //tomtom api key..
-$key = 'QBEEifAuabjC4RlgU8mqlxlaskwbBfVe';
+$key = 'tomtomAPIkey';
 
 $url='https://api.tomtom.com/routing/1/calculateRoute/'.$source_latitude.','.$source_longitude.':'.$destination_latitude.','.$destination_longitude.'/json?avoid=unpavedRoads&key='.$key.'';
 
@@ -23,7 +23,7 @@ curl_setopt($tomtom, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($tomtom, CURLOPT_URL, $url);
 curl_setopt($tomtom, CURLOPT_RETURNTRANSFER, true);
 
-//getting response from googleapis..
+//getting response from tomtomapis..
 $response = curl_exec($tomtom);
 $err = curl_error($tomtom);
 
@@ -34,7 +34,6 @@ if ($err) {
 } else {
 	  echo "200 : OK\n";
 }
-
 //extracting polyline from the JSON response..
 $data_tomtom = json_decode($response, true);
 $data_new = $data_tomtom['routes'];
@@ -47,7 +46,7 @@ $new_leg_points=$new_legs['points'];
 require_once(__DIR__.'/Polyline.php');
 $polyline_tomtom = Polyline::encode($new_leg_points);
 
-
+//echo $polyline_tomtom;
 //using tollguru API..
 $curl = curl_init();
 
@@ -75,7 +74,7 @@ CURLOPT_CUSTOMREQUEST => "POST",
 CURLOPT_POSTFIELDS => $encode_postData,
 CURLOPT_HTTPHEADER => array(
 				      "content-type: application/json",
-				      "x-api-key: 8hjbGhmFqP8HBQJ6NbMpT2FjRNhhtdgT"),
+				      "x-api-key: tollguruapi"),
 ));
 
 $response = curl_exec($curl);
@@ -89,7 +88,7 @@ if ($err) {
 }
 
 //response from tollguru..
-// var_dump(json_decode($response, true));
+ var_dump(json_decode($response, true));
 
 //$data = var_dump(json_decode($response, true));
 //print_r($data);
