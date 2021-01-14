@@ -19,24 +19,16 @@ With this in place, make a GET request: https://api.tomtom.com/routing/1/calcula
 * TomTom doesn't return us route as a polyline, but as a list of `{ latitude, longitude }`, we need to convert this to a polyline
 
 ```python
-import polyline as Poly
-
-response_from_tomtom=requests.get(url).json()
-coordinates_dict_list=response_from_tomtom['routes'][0]['legs'][0]['points']
-coordinates_list=[(i['latitude'],i['longitude']) for i in coordinates_dict_list]
-polyline=Poly.encode(coordinates_list)
-```
-
-```python
+#Importing modules
 import json
 import requests
 import os
-import polyline as Poly
+import polyline as poly
 
 
 '''Fetching Polyline from Tomtom'''
 
-#API key for Mapbox
+#API key for TomTom
 token=os.environ.get("Tomtom_API_Key")
 
 #Source and Destination Coordinates
@@ -47,7 +39,7 @@ source_latitude='32.7767'
 destination_longitude='-74.0060'
 destination_latitude='40.7128'
 
-#Query Mapbox with Key and Source-Destination coordinates
+#Query Tomtom with Key and Source-Destination coordinates
 url='https://api.tomtom.com/routing/1/calculateRoute/{a},{b}:{c},{d}/json?avoid=unpavedRoads&key={e}'.format(a=source_latitude,b=source_longitude,c=destination_latitude,d=destination_longitude,e=token)
 
 #converting the response to json
@@ -59,7 +51,7 @@ coordinates_dict_list=response_from_tomtom['routes'][0]['legs'][0]['points']
 #We now must convert this list of dictionary to simple tuple or list iterables for "polyline.encode" to work
 coordinates_list=[(i['latitude'],i['longitude']) for i in coordinates_dict_list]
 #generating polyline from list of lat-lon pairs
-polyline=Poly.encode(coordinates_list)
+polyline=poly.encode(coordinates_list)
 ```
 
 Note:
@@ -94,8 +86,8 @@ headers = {
 params = {
             'source': "tomtom",
             'polyline': polyline ,               
-            'vehicleType': '2AxlesAuto',                
-            'departure_time' : "2021-01-05T09:46:08Z"   
+            'vehicleType': '2AxlesAuto',                   #'''Visit https://tollguru.com/developers/docs/#vehicle-types to know more options'''
+            'departure_time' : "2021-01-05T09:46:08Z"      #'''Visit https://en.wikipedia.org/wiki/Unix_time to know the time format'''
         }
 
 #Requesting Tollguru with parameters
@@ -105,7 +97,7 @@ response_tollguru= requests.post(Tolls_URL, json=params, headers=headers).json()
 if str(response_tollguru).find('message')==-1:
     print('\n The Rates Are ')
     #extracting rates from Tollguru response is no error
-    print(*response_tollguru['summary']['rates'].items(),end="\n\n")
+    print(*response_tollguru['route']['costs'].items(),end="\n\n")
 else:
     raise Exception(response_tollguru['message'])
 ```
