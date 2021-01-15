@@ -36,17 +36,12 @@ if ($err) {
 }
 //extracting polyline from the JSON response..
 $data_tomtom = json_decode($response, true);
-$data_new = $data_tomtom['routes'];
-$new_data = $data_new['0'];
-$legs=$new_data['legs'];
-$new_legs=$legs['0'];
-$new_leg_points=$new_legs['points'];
+$new_leg_points=$data_tomtom['routes']['0']['legs']['0']['points'];
 
 //polyline..
 require_once(__DIR__.'/Polyline.php');
 $polyline_tomtom = Polyline::encode($new_leg_points);
 
-//echo $polyline_tomtom;
 //using tollguru API..
 $curl = curl_init();
 
@@ -88,8 +83,6 @@ if ($err) {
 }
 
 //response from tollguru..
- var_dump(json_decode($response, true));
-
-//$data = var_dump(json_decode($response, true));
-//print_r($data);
+$data = var_dump(json_decode($response, true));
+print_r($data);
 ?>
