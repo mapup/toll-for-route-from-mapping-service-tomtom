@@ -22,32 +22,29 @@ With this in place, make a GET request: https://api.tomtom.com/routing/1/calcula
 
 //extracting polyline from the JSON response..
 $data_tomtom = json_decode($response, true);
-$data_new = $data_tomtom['routes'];
-$new_data = $data_new['0'];
-$legs=$new_data['legs'];
-$new_legs=$legs['0'];
-$new_leg_points=$new_legs['points'];
+$new_leg_points=$data_tomtom['routes']['0']['legs']['0']['points'];
 
 //polyline..
 require_once(__DIR__.'/Polyline.php');
 $polyline_tomtom = Polyline::encode($new_leg_points);
 
+
 ```
 
 ```php
 
-/using tomtommaps API
+//using tomtommaps API
 
 //Source and Destination Coordinates
 //Dallas, TX
 $source_longitude='-96.7970';
 $source_latitude='32.7767';
-//New York, NY
-$destination_longitude='-74.0060';
-$destination_latitude='40.7128';
+//Addison, Texas
+$destination_longitude='-96.83256117564599';
+$destination_latitude='32.967452488953626';
 
 //tomtom api key..
-$key = 'tomtom_api_key';
+$key = 'tomtomAPIkey';
 
 $url='https://api.tomtom.com/routing/1/calculateRoute/'.$source_latitude.','.$source_longitude.':'.$destination_latitude.','.$destination_longitude.'/json?avoid=unpavedRoads&key='.$key.'';
 
@@ -60,7 +57,7 @@ curl_setopt($tomtom, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($tomtom, CURLOPT_URL, $url);
 curl_setopt($tomtom, CURLOPT_RETURNTRANSFER, true);
 
-//getting response from googleapis..
+//getting response from tomtomapis..
 $response = curl_exec($tomtom);
 $err = curl_error($tomtom);
 
@@ -71,18 +68,14 @@ if ($err) {
 } else {
 	  echo "200 : OK\n";
 }
-
 //extracting polyline from the JSON response..
 $data_tomtom = json_decode($response, true);
-$data_new = $data_tomtom['routes'];
-$new_data = $data_new['0'];
-$legs=$new_data['legs'];
-$new_legs=$legs['0'];
-$new_leg_points=$new_legs['points'];
+$new_leg_points=$data_tomtom['routes']['0']['legs']['0']['points'];
 
 //polyline..
 require_once(__DIR__.'/Polyline.php');
 $polyline_tomtom = Polyline::encode($new_leg_points);
+
 
 ```
 
@@ -144,10 +137,8 @@ if ($err) {
 }
 
 //response from tollguru..
-// var_dump(json_decode($response, true));
-
-//$data = var_dump(json_decode($response, true));
-//print_r($data);
+$data = var_dump(json_decode($response, true));
+print_r($data);
 
 
 ```
