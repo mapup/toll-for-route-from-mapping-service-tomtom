@@ -1,15 +1,24 @@
 require 'HTTParty'
 require 'json'
 require 'fast_polylines'
+require 'cgi'
 
-# Source Details in latitude-longitude pair
-SOURCE = { longitude: '-96.7970', latitude: '32.7767'}
-# Destination Details in latitude-longitude pair
-DESTINATION = {longitude: '-74.0060',latitude: '40.7128' }
+KEY = ENV['TOMTOM_KEY']
+
+def get_coord_hash(loc)
+    geocoding_url = "https://api.tomtom.com/search/2/geocode/#{CGI::escape(loc)}.JSON?key=#{KEY}&limit=1"
+    coord = JSON.parse(HTTParty.get(geocoding_url).body)
+    return (coord['results'].pop)['position']
+end
+
+# Source Details in latitude-longitude pair using geocoding API
+SOURCE = get_coord_hash("Dallas, TX")
+
+# Destination Details in latitude-longitude pair using geocoding API
+DESTINATION = get_coord_hash("New York, NY")
 
 # GET Request to TomTom for Route Coordinates
-KEY = ENV['TOMTOM_KEY']
-TOMTOM_URL = "https://api.tomtom.com/routing/1/calculateRoute/#{SOURCE[:latitude]},#{SOURCE[:longitude]}:#{DESTINATION[:latitude]},#{DESTINATION[:longitude]}/json?avoid=unpavedRoads&key=#{KEY}"
+TOMTOM_URL = "https://api.tomtom.com/routing/1/calculateRoute/#{SOURCE["lat"]},#{SOURCE["lon"]}:#{DESTINATION["lat"]},#{DESTINATION["lon"]}/json?avoid=unpavedRoads&key=#{KEY}"
 RESPONSE = HTTParty.get(TOMTOM_URL).body
 json_parsed = JSON.parse(RESPONSE)
 

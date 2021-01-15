@@ -15,22 +15,32 @@
 With this in place, make a GET request: https://api.tomtom.com/routing/1/calculateRoute/#{SOURCE[:latitude]},#{SOURCE[:longitude]}:#{DESTINATION[:latitude]},#{DESTINATION[:longitude]}/json?avoid=unpavedRoads&key=#{KEY}
 
 ### Note:
-* TomTom accepts source and destination, as `:` seperated `{:longitude,:latitude}`.
+* TomTom accepts source and destination, as `:` seperated `{:longitude,:latitude}`. To convert Source string to lat long pairs we use geocoding API
 * TomTom doesn't return us route as a polyline, but as an array of `[ latitude, longitude ]`, we need to convert this to a polyline
 
 ```ruby
 require 'HTTParty'
 require 'json'
 require 'fast_polylines'
+require 'cgi'
+
+KEY = ENV['TOMTOM_KEY']
+
+def get_coord_hash(loc)
+    # Geocoding API requires URL encoded string as parameter
+    geocoding_url = "https://api.tomtom.com/search/2/geocode/#{CGI::escape(loc)}.JSON?key=#{KEY}&limit=1"
+    coord = JSON.parse(HTTParty.get(geocoding_url).body)
+    return (coord['results'].pop)['position']
+end
 
 # Source Details in latitude-longitude pair
-SOURCE = { longitude: '-96.7970', latitude: '32.7767'}
+SOURCE = get_coord_hash("Dallas, TX")
+
 # Destination Details in latitude-longitude pair
-DESTINATION = {longitude: '-74.0060',latitude: '40.7128' }
+DESTINATION = get_coord_hash("New York, NY")
 
 # GET Request to TomTom for Route Coordinates
-KEY = ENV['TOMTOM_KEY']
-TOMTOM_URL = "https://api.tomtom.com/routing/1/calculateRoute/#{SOURCE[:latitude]},#{SOURCE[:longitude]}:#{DESTINATION[:latitude]},#{DESTINATION[:longitude]}/json?avoid=unpavedRoads&key=#{KEY}"
+TOMTOM_URL = "https://api.tomtom.com/routing/1/calculateRoute/#{SOURCE["lat"]},#{SOURCE["lon"]}:#{DESTINATION["lat"]},#{DESTINATION["lon"]}/json?avoid=unpavedRoads&key=#{KEY}"
 RESPONSE = HTTParty.get(TOMTOM_URL).body
 json_parsed = JSON.parse(RESPONSE)
 
