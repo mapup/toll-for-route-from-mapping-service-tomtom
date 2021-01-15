@@ -43,72 +43,17 @@ namespace sample
             //Get the latitude&longitude
             json = json.routes[0].legs[0].points;
 
-            //int json_lenght = json.Lenght();
             string polyline ="";
-            //json - enumera - lenght - under for - e
-            //Console.WriteLine(json_length);
-
-
-            /*IEnumerable<(double, double)> coordinates = new (double, double) [10000];
-            int count = 10000;
-            foreach(var value in json){
-                coordinates[count]=(value['latitude'],value['longitude']);
-                count+=1;
-            }*/
-
-            //ArrayList<String> latitude = new ArrayList();
-            //ArrayList<String> longitude = new ArrayList();
-
             foreach(var value in json){
 
                 double lat = value["latitude"];
                 double l2 = value["longitude"];
-                //latitude.Add(lat);
-                //longitude.Add(l2);
-                //double[] terms = new double [value.count];
-                //Console.WriteLine(polyline)
-                //IEnumerable<(double, double)> coordinates = new (double, double) [] { (value["latitude"], value["longitude"])};
-	            IEnumerable<(double, double)> coordinates = new (double, double) [] { (lat, l2)};
-	            string short_polyline = PolylineAlgorithm.Encode(coordinates);
+	        IEnumerable<(double, double)> coordinates = new (double, double) [] { (lat, l2)};
+	        string short_polyline = PolylineAlgorithm.Encode(coordinates);
                 polyline += short_polyline;
                 //Console.WriteLine(polyline);    
             }
-            
-            //Console.WriteLine(latitude);
-            /*Double[] array = new Double[latitude.size()];
-            for (int i = 0; i < latitude.size(); i++) 
-            {
-            ArrayList<String> row = latitude.get(i);
-            array[i] = row.toArray(new Double[row.size()]);
-            }
-            Double[] array_lon = new Double[longitude.size()];
-            for (int i = 0; i < longitude.size(); i++) 
-            {
-            ArrayList<String> row = longitude.get(i);
-            array_lon[i] = row.toArray(new Double[row.size()]);
-            }
-            Console.WriteLine(array[0]);
-            Console.WriteLine(array_lon[0]);*/
-
-            //IEnumerable<(double, double)> coordinates = new (double, double) [] { (value["latitude"], value["longitude"])};
-	        //IEnumerable<(double, double)> coordinates = new (double, double) [] { (latitude, longitude)};
-	        //string short_polyline = PolylineAlgorithm.Encode(coordinates);
-            //polyline += short_polyline;
-            //Console.WriteLine(lat);
-            //Console.WriteLine(polyline);
-            //dynamic data = json.routes[0].legs[0].steps;
-            //Console.WriteLine(json);
-            //Console.WriteLine(json.routes[0].points);
-            //Console.WriteLine(lat, l2);
-            
-
-
-            // foreach(var value in data){
-            //    Console.WriteLine(value["longitude"]);
-            // }
-            // //Console.WriteLine(json.routes.points);
-            
-            //foreach(var in json.routes.points)
+		
         string Toll_key="Toll_key";
         var client = new RestClient("https://dev.tollguru.com/v1/calc/route");
         var request_tollguru = new RestRequest(Method.POST);
@@ -118,12 +63,12 @@ namespace sample
         request_tollguru.AddParameter("application/json", "{\"source\":\"tomtom\" , \"polyline\":\""+polyline+"\" }", ParameterType.RequestBody);
         IRestResponse response_tollguru = client.Execute(request_tollguru);        
         var content = response_tollguru.Content;
-        //string[] dump = content.Split("tag\":");
-        Console.WriteLine(content);
-        //string[] dump1 = dump[1].Split(",");
-        //Cost variable contains the price 
-        //string cost = dump1[0];
+        string[] dump = content.Split("tag\":");
         //Console.WriteLine(content);
+        string[] dump1 = dump[1].Split(",");
+        //Cost variable contains the price 
+        string cost = dump1[0];
+        Console.WriteLine(cost);
 
         }
     }
