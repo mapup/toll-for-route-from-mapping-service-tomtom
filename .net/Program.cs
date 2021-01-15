@@ -17,7 +17,7 @@ namespace sample
         {
             
             //TomTom_Key
-            string TomTom_key="hokjoDegR1FCS7cBQOTPZYekcimP6zus";
+            string TomTom_key="TomTom_Key";
             //Location co-ordinates
             string source_longitude="-96.915920";
             string source_latitude="32.981910";
@@ -109,12 +109,12 @@ namespace sample
             // //Console.WriteLine(json.routes.points);
             
             //foreach(var in json.routes.points)
-        string api_key2="J9L4QH37NQ7jqRQPND9fJPDHgJd8mptg";
+        string Toll_key="Toll_key";
         var client = new RestClient("https://dev.tollguru.com/v1/calc/route");
         var request_tollguru = new RestRequest(Method.POST);
         
         request_tollguru.AddHeader("content-type", "application/json");
-        request_tollguru.AddHeader("x-api-key", api_key2);
+        request_tollguru.AddHeader("x-api-key", Toll_key);
         request_tollguru.AddParameter("application/json", "{\"source\":\"tomtom\" , \"polyline\":\""+polyline+"\" }", ParameterType.RequestBody);
         IRestResponse response_tollguru = client.Execute(request_tollguru);        
         var content = response_tollguru.Content;
