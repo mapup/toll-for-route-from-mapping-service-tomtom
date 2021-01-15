@@ -2,12 +2,12 @@
 import json
 import requests
 import os
-import polyline as Poly
+import polyline as poly
 
 
 '''Fetching Polyline from Tomtom'''
 
-#API key for Mapbox
+#API key for TomTom
 token=os.environ.get("Tomtom_API_Key")
 
 #Source and Destination Coordinates
@@ -18,7 +18,7 @@ source_latitude='32.7767'
 destination_longitude='-74.0060'
 destination_latitude='40.7128'
 
-#Query Mapbox with Key and Source-Destination coordinates
+#Query Tomtom with Key and Source-Destination coordinates
 url='https://api.tomtom.com/routing/1/calculateRoute/{a},{b}:{c},{d}/json?avoid=unpavedRoads&key={e}'.format(a=source_latitude,b=source_longitude,c=destination_latitude,d=destination_longitude,e=token)
 
 #converting the response to json
@@ -30,14 +30,8 @@ coordinates_dict_list=response_from_tomtom['routes'][0]['legs'][0]['points']
 #We now must convert this list of dictionary to simple tuple or list iterables for "polyline.encode" to work
 coordinates_list=[(i['latitude'],i['longitude']) for i in coordinates_dict_list]
 #generating polyline from list of lat-lon pairs
-polyline=Poly.encode(coordinates_list)
+polyline=poly.encode(coordinates_list)
 
-
-#'''Todo  checking for errors in response ''''
-'''if str(response).find('message')==-1:
-    pass
-else:
-    raise Exception(response['message'])'''
 
 
 '''Calling Tollguru API'''
@@ -67,6 +61,6 @@ response_tollguru= requests.post(Tolls_URL, json=params, headers=headers).json()
 if str(response_tollguru).find('message')==-1:
     print('\n The Rates Are ')
     #extracting rates from Tollguru response is no error
-    print(*response_tollguru['summary']['rates'].items(),end="\n\n")
+    print(*response_tollguru['route']['costs'].items(),end="\n\n")
 else:
     raise Exception(response_tollguru['message'])
