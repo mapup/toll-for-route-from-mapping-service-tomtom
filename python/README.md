@@ -15,6 +15,12 @@
 #### Step 3: Getting Geocodes from Tomtom
 * Use the following function to get geocodes for an address
 ```python
+import json
+import requests
+
+#API key for TomTom
+token=os.environ.get("Tomtom_API_Key")
+
 def get_geocode_from_tomtom(address):
     url = f"https://api.tomtom.com/search/2/geocode/{address}.JSON?key={token}&limit=1"
     latitude,longitude=requests.get(url).json()['results'][0]['position'].values()
@@ -27,6 +33,15 @@ With this in place, make a GET request: https://api.tomtom.com/routing/1/calcula
 * TomTom doesn't return us route as a polyline, but as a list of `{ latitude, longitude }`, we need to convert this to a polyline
 * Use the following function to extract polyline from TomTom
 ```python
+#Importing modules
+import json
+import requests
+import os
+import polyline as poly
+
+#API key for TomTom
+token=os.environ.get("Tomtom_API_Key")
+
 def get_polyline_from_tomtom(source_latitude,source_longitude,destination_latitude,destination_longitude):
     #Query Tomtom with Key and Source-Destination coordinates
     url='https://api.tomtom.com/routing/1/calculateRoute/{a},{b}:{c},{d}/json?avoid=unpavedRoads&key={e}'.format(a=source_latitude,b=source_longitude,c=destination_latitude,d=destination_longitude,e=token)
@@ -59,6 +74,15 @@ We need to send this route polyline to TollGuru API to receive toll information
 * Use the following function to get rates
 
 ```python
+#Importing modules
+import json
+import requests
+import os
+import polyline as poly
+
+#API key for Tollguru
+Tolls_Key = os.environ.get("TollGuru_API_Key")
+
 def get_rates_from_tollguru(polyline):
     #Tollguru querry url
     Tolls_URL = 'https://dev.tollguru.com/v1/calc/route'

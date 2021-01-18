@@ -54,21 +54,52 @@ def get_rates_from_tollguru(polyline):
         return(response_tollguru['route']['costs'])
     else:
         raise Exception(response_tollguru['message'])
+
                 
-'''Program Starts'''
-#Step 1 :Getting Geocodes from Arcgis for Source and Destination
-source_latitude,source_longitude=get_geocode_from_tomtom("Dallas, TX")               
-destination_latitude,destination_longitude=get_geocode_from_tomtom("Newyork, NY")
+'''Testing'''
+#Importing Functions
+from csv import reader,writer
+import time
+temp_list=[]
+with open('testCases.csv','r') as f:
+    csv_reader=reader(f)
+    for count,i in enumerate(csv_reader):
+        #if count>2:
+        #   break
+        if count==0:
+            i.extend(("Input_polyline","Tollguru_Tag_Cost","Tollguru_Cash_Cost","Tollguru_QueryTime_In_Sec"))
+        else:
+            try:
+                source_latitude,source_longitude=get_geocode_from_tomtom(i[1])
+                destination_latitude,destination_longitude=get_geocode_from_tomtom(i[2])
+                polyline=get_polyline_from_tomtom(source_latitude,source_longitude,destination_latitude,destination_longitude)
+                i.append(polyline)
+            except:
+                i.append("Routing Error") 
+            
+            start=time.time()
+            try:
+                rates=get_rates_from_tollguru(polyline)
+            except:
+                i.append(False)
+            time_taken=(time.time()-start)
+            if rates=={}:
+                i.append((None,None))
+            else:
+                try:
+                    tag=rates['tag']
+                except:
+                    tag=None
+                try:
+                    cash=rates['cash']
+                except :
+                    cash=None
+                i.extend((tag,cash))
+            i.append(time_taken)
+        #print(f"{len(i)}   {i}\n")
+        temp_list.append(i)
 
-#Step 2 : Get Polyline from Arcgis
-polyline_from_tomtom=get_polyline_from_tomtom(source_latitude,source_longitude,destination_latitude,destination_longitude)
+with open('testCases_result.csv','w') as f:
+    writer(f).writerows(temp_list)
 
-#Step 3 : Get rates from Tollguru
-rates_from_tollguru=get_rates_from_tollguru(polyline_from_tomtom)
-
-#Print the rates of all the available modes of payment
-if rates_from_tollguru=={}:
-    print("The route doesn't have tolls")
-else:
-    print(f"The rates are \n {rates_from_tollguru}")
-'''Program Ends'''
+'''Testing Ends'''
