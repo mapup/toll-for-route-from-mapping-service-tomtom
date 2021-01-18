@@ -1,7 +1,8 @@
 const request = require("request");
+const polyline = require("polyline");
 
-// Token from mapbox
-const token = process.env.MAPBOX_TOKEN;
+// REST API key from tomtom
+const key = process.env.TOMTOM_KEY;
 const tollguruKey = process.env.TOLLGURU_KEY;
 
 // Dallas, TX
@@ -16,23 +17,33 @@ const destination = {
     latitude: '40.7128'
 };
 
-const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?geometries=polyline&access_token=${token}&overview=full`
+const url = `https://api.tomtom.com/routing/1/calculateRoute/${source.latitude},${source.longitude}:${destination.latitude},${destination.longitude}/json?avoid=unpavedRoads&key=${key}`;
+
 
 const head = arr => arr[0];
-// JSON path "$..geometry"
-const getGeometry = body => body.routes.map(x => x.geometry);
-const getPolyline = body => head(getGeometry(JSON.parse(body)));
+const flatten = (arr, x) => arr.concat(x);
+
+// JSON path "$..points"
+const getPoints = body => body.routes
+  .map(route => route.legs)
+  .reduce(flatten)
+  .map(leg => leg.points)
+  .reduce(flatten)
+  .map(({ latitude, longitude }) => [latitude, longitude])
+
+const getPolyline = body => polyline.encode(getPoints(JSON.parse(body)));
 
 const getRoute = (cb) => request.get(url, cb);
 
-//const handleRoute = (e, r, body) => console.log(getPolyline(body));
-//getRoute(handleRoute);
+// const handleRoute = (e, r, body) => console.log(getPolyline(body));
 
 const tollguruUrl = 'https://dev.tollguru.com/v1/calc/route';
 
 const handleRoute = (e, r, body) =>  {
-  console.log(body)
+
   const _polyline = getPolyline(body);
+  console.log(_polyline);
+
   request.post(
     {
       url: tollguruUrl,
@@ -40,10 +51,7 @@ const handleRoute = (e, r, body) =>  {
         'content-type': 'application/json',
         'x-api-key': tollguruKey
       },
-      body: JSON.stringify({
-        source: "mapbox",
-        polyline: _polyline,
-      })
+      body: JSON.stringify({ source: "tomtom", polyline: _polyline })
     },
     (e, r, body) => {
       console.log(e);

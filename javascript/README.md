@@ -1,29 +1,39 @@
-# [Mapbox](https://www.mapbox.com/)
+# [](https://developer.tomtom.com/)
 
-### Get token to access Mapbox APIs (if you have an API token skip this)
-#### Step 1: Login/Signup
-* Create an accont to access [Mapbox Account Dashboard](https://account.mapbox.com/)
-* go to signup/login link https://account.mapbox.com/auth/signin/
+### Get API key to access TomTom APIs (if you have an API key skip this)
+#### Step 1: Login/Singup
+* Create an account to access [TomTom Developer Portal](https://developer.tomtom.com/)
+* go to signup/login link https://developer.tomtom.com/user/login
+* you will need to agree to TomTom's Terms of Service https://developer.tomtom.com/terms-and-conditions
 
-#### Step 2: Creating a token
-* You will be presented with a default token.
-* If you want you can create an application specific token.
+#### Step 2: Getting you Key
+* Login to your TomTom Developer Portal
+* You can find you key at https://developer.tomtom.com/user/me/apps
+* If you want you can create additional keys as per different
+  applications
 
-
-To get the route polyline make a GET request on https://api.mapbox.com/directions/v5/mapbox/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?geometries=polyline&access_token=${token}&overview=full
+With this in place, make a GET request: https://api.tomtom.com/routing/1/calculateRoute/${source.latitude},${source.longitude}:${destination.latitude},${destination.longitude}/json?avoid=unpavedRoads&key=${key}
 
 ### Note:
-* we will be sending `geometries` as `polyline` and `overview` as `full`.
-* Setting overview as full sends us complete route. Default value for `overview` is `simplified`, which is an approximate (smoothed) path of the resulting directions.
-* Mapbox accepts source and destination, as semicolon seperated
-  `${longitude,latitude}`.
+* TomTom accepts source and destination, as `:` seperated `${longitude,latitude}`.
+* TomTom doesn't return us route as a polyline, but as a list of `{ latitude, longitude }`, we need to convert this to a polyline
+
+```javascript
+// JSON path "$..points"
+const getPoints = body => body.routes
+  .map(route => route.legs)
+  .reduce(flatten)
+  .map(leg => leg.points)
+  .reduce(flatten)
+  .map(({ latitude, longitude }) => [latitude, longitude])
+```
 
 ```javascript
 const request = require("request");
+const polyline = require("polyline");
 
-// Token from mapbox
-const token = process.env.MAPBOX_TOKEN;
-const tollguruKey = process.env.TOLLGURU_KEY;
+// REST API key from tomtom
+const key = process.env.TOMTOM_KEY;
 
 // Dallas, TX
 const source = {
@@ -37,12 +47,22 @@ const destination = {
     latitude: '40.7128'
 };
 
-const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?geometries=polyline&access_token=${token}&overview=full`
+const url = `https://api.tomtom.com/routing/1/calculateRoute/${source.latitude},${source.longitude}:${destination.latitude},${destination.longitude}/json?avoid=unpavedRoads&key=${key}`;
 
-const head = arr => arr[0]
-// JSON path "$..geometry"
-const getGeometry = body => body.routes.map(x => x.geometry)
-const getPolyline = body => head(getGeometry(JSON.parse(body)));
+
+const head = arr => arr[0];
+const flatten = (arr, x) => arr.concat(x);
+
+// JSON path "$..points"
+const getPoints = body => body.routes
+  .map(route => route.legs)
+  .reduce(flatten)
+  .map(leg => leg.points)
+  .reduce(flatten)
+  .map(({ latitude, longitude }) => [latitude, longitude])
+
+const getPolyline = body => polyline.encode(getPoints(JSON.parse(body)));
+
 const getRoute = (cb) => request.get(url, cb);
 
 const handleRoute = (e, r, body) => console.log(getPolyline(body));
@@ -52,7 +72,7 @@ getRoute(handleRoute);
 
 Note:
 
-We extracted the polyline for a route from Mapbox API
+We extracted the polyline for a route from TomTom Maps API
 
 We need to send this route polyline to TollGuru API to receive toll information
 
@@ -64,13 +84,16 @@ We need to send this route polyline to TollGuru API to receive toll information
 * Similarly, `departure_time` is important for locations where tolls change based on time-of-the-day.
 
 the last line can be changed to following
+
 ```javascript
 
 const tollguruUrl = 'https://dev.tollguru.com/v1/calc/route';
 
 const handleRoute = (e, r, body) =>  {
-  console.log(body)
+
   const _polyline = getPolyline(body);
+  console.log(_polyline);
+
   request.post(
     {
       url: tollguruUrl,
@@ -79,7 +102,7 @@ const handleRoute = (e, r, body) =>  {
         'x-api-key': tollguruKey
       },
       body: JSON.stringify({
-        source: "mapbox",
+        source: "tomtom",
         polyline: _polyline,
         vehicleType: "2AxlesAuto",
         departure_time: "2021-01-05T09:46:08Z"
@@ -95,4 +118,11 @@ const handleRoute = (e, r, body) =>  {
 getRoute(handleRoute);
 ```
 
-Whole working code can be found in index.js file.
+The working code can be found in index.js file.
+
+## License
+ISC License (ISC). Copyright 2020 &copy;TollGuru. https://tollguru.com/
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
