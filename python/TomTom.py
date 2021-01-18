@@ -67,7 +67,6 @@ polyline_from_tomtom=get_polyline_from_tomtom(source_latitude,source_longitude,d
 rates_from_tollguru=get_rates_from_tollguru(polyline_from_tomtom)
 
 #Print the rates of all the available modes of payment
-#Print the rates of all the available modes of payment
 if rates_from_tollguru=={}:
     print("The route doesn't have tolls")
 else:
