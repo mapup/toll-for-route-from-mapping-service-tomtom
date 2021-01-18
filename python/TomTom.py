@@ -58,7 +58,7 @@ def get_rates_from_tollguru(polyline):
 '''Program Starts'''
 #Step 1 :Getting Geocodes from Arcgis for Source and Destination
 source_latitude,source_longitude=get_geocode_from_tomtom("Dallas, TX")               
-destination_latitude,destination_longitude=get_geocode_from_tomtom("Newyork, NY")
+destination_latitude,destination_longitude=get_geocode_from_tomtom("New York, NY")
 
 #Step 2 : Get Polyline from Arcgis
 polyline_from_tomtom=get_polyline_from_tomtom(source_latitude,source_longitude,destination_latitude,destination_longitude)
@@ -67,4 +67,8 @@ polyline_from_tomtom=get_polyline_from_tomtom(source_latitude,source_longitude,d
 rates_from_tollguru=get_rates_from_tollguru(polyline_from_tomtom)
 
 #Print the rates of all the available modes of payment
-print(f"The rates are \n {rates_from_tollguru}")
+#Print the rates of all the available modes of payment
+if rates_from_tollguru=={}:
+    print("The route doesn't have tolls")
+else:
+    print(f"The rates are \n {rates_from_tollguru}")
