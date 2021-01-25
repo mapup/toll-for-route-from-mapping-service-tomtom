@@ -3,10 +3,10 @@ Use these code examples to extend mapping capabilities of TomTom by adding toll 
 
 After adding toll information you will be able to see tolls for the following
 ### Vehicle types in United States, Canada, Mexico
-* Car/ Jeep/ Van -> 2AxlesAuto
+* Car, SUV or Pickup truck. You can specify number of axles including axles in trailers
 * Bike -> 2AxlesMoto
 * Pickup truck/ Light commercial vehicles -> 2AxlesLCV
-Trucks from 2-axles to 7- axles (2-axles truck),
+Trucks from 2-axles to 9-axles (2-axles truck),
 Bus -> 2AxlesBus (2-axles Bus)
 HCM, EME -> 2AxlesHCMEME
 
