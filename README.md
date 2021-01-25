@@ -23,6 +23,8 @@ Trucks from 2-axles to 9-axles (2-axles truck),
 Bus -> 2AxlesBus (2-axles Bus)
 HCM, EME -> 2AxlesHCMEME
 
+### Support for [vairous mapping platfroms](https://github.com/mapup)
+[Click here](https://github.com/mapup/toll-tomtom/wiki/Mapping-platforms-supported-by-TollGuru) to see all the permissible values for **source** argument.
 
 ### An exclusive [support for truckers](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru)
 TollGuru keeps track of various aspects of trucking while calculating toll for them like : "truckType","shippedHazardousGoods","tunnelCategory","truckRestrictionPenalty" and [more](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru).
