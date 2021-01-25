@@ -28,7 +28,8 @@ HCM, EME -> 2AxlesHCMEME
 TollGuru keeps track of various aspects of trucking while calculating toll for them like : "truckType","shippedHazardousGoods","tunnelCategory","truckRestrictionPenalty" and [more](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru).
 
 ### Time based toll calculations
-TollGuru lets you specify "departure_time" to provide you with most accurate toll rates based on time of day/week/month/year .
+TollGuru lets you specify "departure_time" as 	
+DateTime (string) or Timestamp (number) to provide you with most accurate toll rates based on time of day/week/month/year .
 
 ### Driver's Wage Calculation
 TollGuru lets you specify wage of driver per hour or value of time to calculate the trip cost.
