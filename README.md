@@ -33,7 +33,7 @@ TollGuru lets you specify "departure_time" to provide you with most accurate tol
 ### Driver's Wage Calculation
 TollGuru lets you specify wage of driver per hour or value of time to calculate the trip cost.
 
-### Latest rates for all the available [payment modes]() in  [diverse currencies]()
+### Latest rates for all the available payment modes in  diverse currencies
 Provides rates for cash,credit card, prepaid ,licence plate and every tag transponder based on country/state.
 
 ### Return tolls, monthly pass tolls and discounts
