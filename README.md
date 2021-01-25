@@ -24,8 +24,8 @@ Bus -> 2AxlesBus (2-axles Bus)
 HCM, EME -> 2AxlesHCMEME
 
 
-### An exclusive support for truckers
-TollGuru keeps track of various aspects of trucking while calculating toll for them like : "truckType","shippedHazardousGoods","tunnelCategory","truckRestrictionPenalty" and much [more]().
+### An exclusive [support for truckers](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru)
+TollGuru keeps track of various aspects of trucking while calculating toll for them like : "truckType","shippedHazardousGoods","tunnelCategory","truckRestrictionPenalty" and [more](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru).
 
 ### Time based toll calculations
 TollGuru lets you specify "departure_time" to provide you with most accurate toll rates based on time of day/week/month/year .
