@@ -3,16 +3,11 @@ Click on the folders above to see examples to extend mapping capabilities of Tom
 
 The toll information has following [key features](https://tollguru.com/developers/features):
 ### Support for [geographies](https://github.com/mapup/toll-tomtom/wiki/Countries-supported-by-TollGuru) 
-#### North America
-United States, Canada, Mexico
-#### Europe
-UK, France, Spain, Portugal, Ireland, Netherlands, Denmark, Norway, Sweden, Italy, Germany
-#### Australia
-Australia
-#### Asia
-India
-#### Latin America
-Peru, Colombia, Argentina, Chile
+* North America - United States, Canada, Mexico
+* Europe - UK, France, Spain, Portugal, Ireland, Netherlands, Denmark, Norway, Sweden, Italy, Germany
+* Australia - Australia
+* Asia - India
+* Latin America - Peru, Colombia, Argentina, Chile
 
 ### Based on vehicles in use in each country, [vehicle type support](https://github.com/mapup/toll-tomtom/wiki/Supported-vehicle-type-list-for-TollGuru-for-respective-continents)
 * Car, SUV or Pickup truck. You can specify number of axles including axles in trailers
