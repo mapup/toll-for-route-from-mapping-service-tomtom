@@ -19,7 +19,7 @@ The toll information has following [key features](https://tollguru.com/developer
 * Bus
 * Recreational vehicle (RV), motorhome, caravan, van
 
-### Rates for all the available payment modes in local currencies
+### Rates for all the available payment options in local currencies
 * Tag transponder (including primary and secondary transponders)
 * cash
 * licence plate
@@ -27,15 +27,15 @@ The toll information has following [key features](https://tollguru.com/developer
 * prepaid
 
 ### Time based tolls
-You can specify "departure_time" as DateTime (string) or Timestamp (number) to provide you with most accurate toll rates based on time of day/week/month/year
+You can specify "departure_time" as DateTime (string) or Timestamp (number) to provide you with most accurate toll rates based on time of day/week/month/year, including tolls for express lanes where tolls change as quickly as every five minutes
 
 ### All types of toll systems
-Support for Barrier, Ticket System and Distance based tolling
+Support for barrier, ticket system and distance based tolling configurations
 
 ### Support for [other mapping services](https://github.com/mapup)
 [See the Mapping services list](https://github.com/mapup/toll-tomtom/wiki/Mapping-platforms-supported-by-TollGuru) for all mapping platforms supported. You can edit the **source** argument to send polyline from another mapping service.
 
-### [Support for trucks based on height, weight, harardous goods, etc.](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru)
+### Support for trucks based on [height, weight, harardous goods, etc.](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru)
 You can receive tolls based on vehicle height, weight etc., while calculating toll: "truckType","shippedHazardousGoods","tunnelCategory","truckRestrictionPenalty" and [more](https://github.com/mapup/toll-tomtom/wiki/Supported-trucking-parameter-in-TollGuru).
 
 
