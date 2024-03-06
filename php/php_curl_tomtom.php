@@ -1,18 +1,22 @@
 <?php
 //using tomtommaps API
 
-//Source and Destination Coordinates
+$TOMTOM_API_KEY = getenv('TOMTOM_API_KEY');
+$TOMTOM_API_URL = "https://api.tomtom.com/routing/1/calculateRoute";
+
+$TOLLGURU_API_KEY = getenv('TOLLGURU_API_KEY');
+$TOLLGURU_API_URL = "https://apis.tollguru.com/toll/v2";
+$POLYLINE_ENDPOINT = "complete-polyline-from-mapping-service";
+
 //Dallas, TX
-$source_longitude='-96.7970';
-$source_latitude='32.7767';
-//Addison, Texas
-$destination_longitude='-96.83256117564599';
-$destination_latitude='32.967452488953626';
+$source_longitude = "-96.7970";
+$source_latitude = "32.7767";
 
-//tomtom api key..
-$key = 'tomtomAPIkey';
+// New York, NY
+$destination_longitude = "-74.0060";
+$destination_latitude = "40.7128";
 
-$url='https://api.tomtom.com/routing/1/calculateRoute/'.$source_latitude.','.$source_longitude.':'.$destination_latitude.','.$destination_longitude.'/json?avoid=unpavedRoads&key='.$key.'';
+$url=$TOMTOM_API_URL.'/'.$source_latitude.','.$source_longitude.':'.$destination_latitude.','.$destination_longitude.'/json?avoid=unpavedRoads&key='.$TOMTOM_API_KEY.'';
 
 //connection..
 $tomtom = curl_init();
@@ -57,19 +61,19 @@ $postdata = array(
 $encode_postData = json_encode($postdata);
 
 curl_setopt_array($curl, array(
-CURLOPT_URL => "https://dev.tollguru.com/v1/calc/route",
-CURLOPT_RETURNTRANSFER => true,
-CURLOPT_ENCODING => "",
-CURLOPT_MAXREDIRS => 10,
-CURLOPT_TIMEOUT => 30,
-CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_URL => $TOLLGURU_API_URL . "/" . $POLYLINE_ENDPOINT,
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
 
-// sending tomtom polyline to tollguru
-CURLOPT_POSTFIELDS => $encode_postData,
-CURLOPT_HTTPHEADER => array(
-				      "content-type: application/json",
-				      "x-api-key: tollguruapi"),
+  // sending tomtom polyline to tollguru
+  CURLOPT_POSTFIELDS => $encode_postData,
+  CURLOPT_HTTPHEADER => array(
+    "content-type: application/json",
+    "x-api-key: " . $TOLLGURU_API_KEY),
 ));
 
 $response = curl_exec($curl);

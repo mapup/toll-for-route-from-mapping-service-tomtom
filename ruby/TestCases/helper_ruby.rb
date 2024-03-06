@@ -3,12 +3,18 @@ require 'json'
 require 'fast_polylines'
 require 'cgi'
 
-$key = ENV['TOMTOM_KEY']
+TOMTOM_API_KEY = ENV["TOMTOM_API_KEY"]
+TOMTOM_API_URL = "https://api.tomtom.com/routing/1/calculateRoute"
+TOMTOM_GEOCODE_API_URL = "https://api.tomtom.com/search/2/geocode"
+
+TOLLGURU_API_KEY = ENV["TOLLGURU_API_KEY"]
+TOLLGURU_API_URL = "https://apis.tollguru.com/toll/v2"
+POLYLINE_ENDPOINT = "complete-polyline-from-mapping-service"
 
 def get_toll_rate(source,destination)
 
     def get_coord_hash(loc)
-        geocoding_url = "https://api.tomtom.com/search/2/geocode/#{CGI::escape(loc)}.JSON?key=#{$key}&limit=1"
+        geocoding_url = "#{TOMTOM_GEOCODE_API_URL}/#{CGI::escape(loc)}.JSON?key=#{TOMTOM_API_KEY}&limit=1"
         coord = JSON.parse(HTTParty.get(geocoding_url).body)
         return (coord['results'].pop)['position']
     end
@@ -20,7 +26,8 @@ def get_toll_rate(source,destination)
     destination = get_coord_hash(destination)
 
     # GET Request to TomTom for Route Coordinates
-    tomtom_url = "https://api.tomtom.com/routing/1/calculateRoute/#{source["lat"]},#{source["lon"]}:#{destination["lat"]},#{destination["lon"]}/json?avoid=unpavedRoads&key=#{$key}"
+
+    tomtom_url = "#{TOMTOM_API_URL}/#{SOURCE["lat"]},#{SOURCE["lon"]}:#{DESTINATION["lat"]},#{DESTINATION["lon"]}/json?avoid=unpavedRoads&key=#{TOMTOM_API_KEY}"
     response = HTTParty.get(tomtom_url).body
     json_parsed = JSON.parse(response)
 
@@ -29,9 +36,8 @@ def get_toll_rate(source,destination)
     google_encoded_polyline = FastPolylines.encode(tomtom_coordinates)
 
     # Sending POST request to TollGuru
-    tollguru_url = 'https://dev.tollguru.com/v1/calc/route'
-    tollguru_key = ENV['TOLLGURU_KEY']
-    headers = {'content-type' => 'application/json', 'x-api-key' => tollguru_key}
+    tollguru_url = "#{TOLLGURU_API_URL}/#{POLYLINE_ENDPOINT}" 
+    headers = {'content-type' => 'application/json', 'x-api-key' => TOLLGURU_API_KEY}
     body = {'source' => "tomtom", 'polyline' => google_encoded_polyline, 'vehicleType' => "2AxlesAuto", 'departure_time' => "2021-01-05T09:46:08Z"}
     tollguru_response = HTTParty.post(tollguru_url,:body => body.to_json, :headers => headers)
     begin
