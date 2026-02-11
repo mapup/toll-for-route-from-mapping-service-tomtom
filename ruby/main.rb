@@ -11,8 +11,8 @@ TOLLGURU_API_KEY = "Dd6AAjtNnBrb9hrBLB9jqpF79JL8DfnA"
 TOLLGURU_API_URL = "https://apis.tollguru.com/toll/v2"
 POLYLINE_ENDPOINT = "complete-polyline-from-mapping-service"
 
-source = get_coord_array("Philadelphia, PA")
-destination = get_coord_array("New York, NY")
+source = "Philadelphia, PA"
+destination = "New York, NY"
 
 # Explore https://tollguru.com/toll-api-docs to get the best of all the parameters that tollguru has to offer
 request_parameters = {

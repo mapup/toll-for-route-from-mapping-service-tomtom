@@ -1,5 +1,5 @@
-const request = require("request");
-const polyline = require("polyline");
+const axios = require("axios");
+const polyline = require("@mapbox/polyline");
 
 // REST API key from tomtom
 const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
@@ -22,7 +22,7 @@ const destination = {
 };
 
 // Explore https://tollguru.com/toll-api-docs to get best of all the parameter that TollGuru has to offer
-request_parameters = {
+const request_parameters = {
   vehicle: {
     type: "2AxlesAuto",
   },
@@ -32,48 +32,45 @@ request_parameters = {
 
 const url = `https://api.tomtom.com/routing/1/calculateRoute/${source.latitude},${source.longitude}:${destination.latitude},${destination.longitude}/json?avoid=unpavedRoads&key=${TOMTOM_API_KEY}`;
 
-const head = (arr) => arr[0];
-const flatten = (arr, x) => arr.concat(x);
+const flatten = (arr) => arr.reduce((acc, val) => acc.concat(val), []);
 
 // JSON path "$..points"
-const getPoints = (body) =>
-  body.routes
-    .map((route) => route.legs)
-    .reduce(flatten)
-    .map((leg) => leg.points)
-    .reduce(flatten)
-    .map(({ latitude, longitude }) => [latitude, longitude]);
-
-const getPolyline = (body) => polyline.encode(getPoints(JSON.parse(body)));
-
-const getRoute = (cb) => request.get(url, cb);
-
-const tollguruUrl = `${TOLLGURU_API_URL}/${POLYLINE_ENDPOINT}`;
-
-const handleRoute = (e, r, body) => {
-  const _polyline = getPolyline(body);
-  console.log(_polyline);
-
-  const requestBody = {
-    source: "tomtom",
-    polyline: _polyline,
-    ...request_parameters,
-  };
-
-  request.post(
-    {
-      url: tollguruUrl,
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": TOLLGURU_API_KEY,
-      },
-      body: JSON.stringify(requestBody),
-    },
-    (e, r, body) => {
-      console.log(e);
-      console.log(body);
-    }
-  );
+const getPoints = (body) => {
+  const legs = body.routes.map((route) => route.legs);
+  const points = flatten(legs).map((leg) => leg.points);
+  return flatten(points).map(({ latitude, longitude }) => [latitude, longitude]);
 };
 
-getRoute(handleRoute);
+const getPolyline = (body) => polyline.encode(getPoints(body));
+
+const handleRoute = async () => {
+  try {
+    const response = await axios.get(url);
+    const body = response.data;
+    const _polyline = getPolyline(body);
+    console.log(_polyline);
+
+    const requestBody = {
+      source: "tomtom",
+      polyline: _polyline,
+      ...request_parameters,
+    };
+
+    const tollguruResponse = await axios.post(
+      `${TOLLGURU_API_URL}/${POLYLINE_ENDPOINT}`,
+      requestBody,
+      {
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": TOLLGURU_API_KEY,
+        },
+      }
+    );
+
+    console.log(tollguruResponse.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+handleRoute();
